@@ -651,8 +651,15 @@ def draw_map(d, x, y, w):
         d.ellipse([cx - rad, cy - rad * 0.7, cx + rad, cy + rad * 0.7],
                   fill=(168, 178, 160), outline=(110, 120, 104))
     nf = sans_bold(8.5)
+    # cartographic displacement for the two pairs whose true positions
+    # sit closer than one pin diameter (Paris/Brussels, Dhaka/Kathmandu):
+    # each marker is nudged a few px in its city's true relative
+    # direction so both numerals stay readable.
+    DISPLACE = {4: (-6, 4), 10: (5, 3)}
     for n, (lon, lat) in PINS.items():
         cx, cy = proj(lon, lat)
+        dx, dy = DISPLACE.get(n, (0, 0))
+        cx, cy = cx + dx, cy + dy
         d.ellipse([cx - 7, cy - 7, cx + 7, cy + 7], fill=RED,
                   outline=(255, 252, 244), width=1)
         s = str(n)
